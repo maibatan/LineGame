@@ -63,6 +63,8 @@ namespace LineGame.Runtime.Managers
                     BoardManager.Instance.SpawnBall();
                     break;
                 case GameState.GameOver:
+                    HighScoreSystem.Instance.SaveScore(_playerScore);
+                    _playerScore = 0;
                     SoundSystem.Instance.PlayGameOverSound();
                     _gameOver.SetActive(true);
                     break;
