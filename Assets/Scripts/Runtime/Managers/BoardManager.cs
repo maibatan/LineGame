@@ -79,7 +79,7 @@ namespace LineGame.Runtime.Managers
                 if (_tilesNoBall.Count <= 0) break;
                 int randomNumber = Random.Range(0, _tilesNoBall.Count);
                 var tile = _tilesNoBall[randomNumber];
-                tile.QueuedBall = Random.Range(0, 5) != 0 ? BallResourceSystem.Instance.GetNormalRandom() : BallResourceSystem.Instance.GetGhostlRandom();
+                tile.QueuedBall = Random.Range(0, 1) != 0 ? BallResourceSystem.Instance.GetNormalRandom() : BallResourceSystem.Instance.GetSpecialRandom();
                 _tilesNoBall.RemoveAt(randomNumber);
                 _queueBall.Enqueue(tile);
                 GameManager.Instance.DisplayQueuedBall(tile.QueuedBall,i);
@@ -195,7 +195,8 @@ namespace LineGame.Runtime.Managers
                 tileHasBallSameCategory.Add(tempTile);
 
             }
-            if (value < 4)
+            value += tile.Ball.Value;
+            if (value < 5)
             {
                 tileHasBallSameCategory.Clear();
             }
@@ -228,7 +229,8 @@ namespace LineGame.Runtime.Managers
                 value += tempTile.Ball.Value;
                 tileHasBallSameCategory.Add(tempTile);
             }
-            if (value < 4)
+            value += tile.Ball.Value;
+            if (value < 5)
             {
                 tileHasBallSameCategory.Clear();
             }
@@ -269,7 +271,8 @@ namespace LineGame.Runtime.Managers
                 tileHasBallSameCategory.Add(tempTile);
 
             }
-            if (value < 4)
+            value += tile.Ball.Value;
+            if (value < 5)
             {
                 tileHasBallSameCategory.Clear();
             }
@@ -311,7 +314,8 @@ namespace LineGame.Runtime.Managers
                 tileHasBallSameCategory.Add(tempTile);
 
             }
-            if (value < 4)
+            value += tile.Ball.Value;
+            if (value < 5)
             {
                 tileHasBallSameCategory.Clear();
             }

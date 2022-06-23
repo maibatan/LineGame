@@ -9,8 +9,7 @@ namespace LineGame.Runtime.Systems
     public class BallResourceSystem : StaticInstance<BallResourceSystem>
     {
         protected List<Ball> _normalBall;
-        protected List<Ball> _ghostBall;
-
+        protected List<Ball> _specialBall;
         #region Unity Methods
         protected override void Awake()
         {
@@ -22,17 +21,17 @@ namespace LineGame.Runtime.Systems
         private void AssembleResources()
         {
             _normalBall = Resources.LoadAll<Ball>("Balls/Normal").ToList();
-            _ghostBall = Resources.LoadAll<Ball>("Balls/Ghost").ToList();
+            _specialBall = Resources.LoadAll<Ball>("Balls/Special").ToList();
         }
         public Ball GetNormalRandom()
         {
             if (_normalBall.Count <= 0) return null;
             return _normalBall[Random.Range(0, _normalBall.Count)];
         }
-        public Ball GetGhostlRandom()
+        public Ball GetSpecialRandom()
         {
-            if (_ghostBall.Count <= 0) return null;
-            return _ghostBall[Random.Range(0, _normalBall.Count)];
+            if (_specialBall.Count <= 0) return null;
+            return _specialBall[Random.Range(0, _normalBall.Count)];
         }
         #endregion
     }
