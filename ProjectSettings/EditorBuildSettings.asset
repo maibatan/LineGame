@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/Gameplay 1080x1280.unity
+  - enabled: 0
+    path: Assets/Scenes/Gameplay 1024x1280.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/Gameplay 1920x1080.unity
+    guid: 29003d528bb05a44db139ae45c332c20
   m_configObjects: {}
