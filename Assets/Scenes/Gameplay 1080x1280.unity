@@ -3806,7 +3806,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _size: 0
   _sizeOfTile: 0.5916713
-  _queuedBallSize: 0
+  _queuedBallSize: 3
   _tilePrefab: {fileID: 3813465536833175912, guid: 083524749754bcd4abe07f99606ac97f, type: 3}
   _selectedFirstTile: {fileID: 0}
   _selectedSecondTile: {fileID: 0}
