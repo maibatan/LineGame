@@ -82,6 +82,7 @@ namespace LineGame.Runtime.Core
         }
         protected void ExplodeBall()
         {
+            GameManager.Instance.AddScore(_ball.Score);
             _ball = null;
             _ballVisual.Explode();
             BoardManager.Instance.Clear(this);
@@ -89,37 +90,36 @@ namespace LineGame.Runtime.Core
         protected void CheckLine()
         {
             
-            int score = 0;
+            bool hasLine = false;
             List<Tile> horizontalLine = BoardManager.Instance.CheckHorizontalLine(this);
             List<Tile> verticalLine = BoardManager.Instance.CheckVerticalLine(this);
             List<Tile> subCrossLine = BoardManager.Instance.CheckSubCrossLine(this);
             List<Tile> mainCrossLine = BoardManager.Instance.CheckMainCrossLine(this);
             for (int i = 0; i < horizontalLine.Count; i++)
             {
-                score += horizontalLine[i]._ball.Score;
+                hasLine = true;
                 horizontalLine[i].ExplodeBall();
             }
             for (int i = 0; i < verticalLine.Count; i++)
             {
-                score += verticalLine[i]._ball.Score;
+                hasLine = true;
                 verticalLine[i].ExplodeBall();
             }
             for (int i = 0; i < subCrossLine.Count; i++)
             {
-                score += subCrossLine[i]._ball.Score;
+                hasLine = true;
                 subCrossLine[i].ExplodeBall();
             }
             for (int i = 0; i < mainCrossLine.Count; i++)
             {
-                score += mainCrossLine[i]._ball.Score;
+                hasLine = true;
                 mainCrossLine[i].ExplodeBall();
             }
-            if (score > 0)
+            if (hasLine)
             {
-                score += _ball.Score;
                 ExplodeBall();
             }
-            GameManager.Instance.AddScore(score);
+           
         }
         protected IEnumerator MoveBallRoutine(Tile endTile)
         {
