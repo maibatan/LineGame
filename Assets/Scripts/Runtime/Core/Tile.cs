@@ -66,6 +66,7 @@ namespace LineGame.Runtime.Core
             }
             if (_ball != null || _queuedBall != null)
             {
+                BoardManager.Instance.SelectedFirstTile = null;
                 return;
             }
             BoardManager.Instance.SelectedSecondTile = this;

@@ -3804,9 +3804,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547a5bc9ff1eb734abdac00661b2868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sizeOfTable: 11
+  _size: 0
   _sizeOfTile: 0.5916713
-  _queuedBallSize: 3
+  _queuedBallSize: 0
   _tilePrefab: {fileID: 3813465536833175912, guid: 083524749754bcd4abe07f99606ac97f, type: 3}
   _selectedFirstTile: {fileID: 0}
   _selectedSecondTile: {fileID: 0}
@@ -4885,7 +4885,7 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 1080, y: 1260}
+  m_ReferenceResolution: {x: 1080, y: 1280}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3

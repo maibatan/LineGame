@@ -72,8 +72,8 @@ namespace LineGame.Runtime.Core
 
         public IEnumerator MoveBall(List<Vector2> path)
         {
-           
-            for(int i = 0; i < path.Count; i++)
+
+            for (int i = 0; i < path.Count; i++)
             {
                 SoundSystem.Instance.PlayMoveSound();
                 Vector3 direction =  (Vector3)path[i] - transform.position;
@@ -82,7 +82,7 @@ namespace LineGame.Runtime.Core
                     yield return new WaitForFixedUpdate();
                     transform.position += direction.normalized/20;
                 }
-                
+
             }        
             _ballRenderer.color = _baseColor;
             _specialRenderer.sprite = null; 

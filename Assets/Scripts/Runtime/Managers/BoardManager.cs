@@ -3,6 +3,7 @@ using LineGame.Runtime.Systems;
 using LineGame.Runtime.Utilities;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace LineGame.Runtime.Managers
@@ -11,11 +12,11 @@ namespace LineGame.Runtime.Managers
     {
 
         [SerializeField]
-        protected int _sizeOfTable;
+        protected int _size;
         public int Size
         {
-            get { return _sizeOfTable; }
-            set { _sizeOfTable = value; }
+            get { return _size; }
+            set { _size = value; }
         }
         [SerializeField]
         protected float _sizeOfTile;
@@ -39,17 +40,15 @@ namespace LineGame.Runtime.Managers
         }
 
         protected Dictionary<Vector2, Tile> _tiles = new Dictionary<Vector2, Tile>();
-        public IReadOnlyDictionary<Vector2, Tile> Tiles => _tiles;
-
         protected List<Tile> _tilesNoBall = new List<Tile>();
         protected Queue<Tile> _queueBall = new Queue<Tile>();
        
         
         public void GenerateBoard()
         {
-            for(int x =0; x < _sizeOfTable; x++)
+            for(int x =0; x < _size; x++)
             {
-                for(int y = 0; y < _sizeOfTable; y++)
+                for(int y = 0; y < _size; y++)
                 {
                     var tile = Instantiate(_tilePrefab,new Vector3(x,y),Quaternion.identity,transform);
                     tile.name = $"Tile {x} {y}";
@@ -57,7 +56,7 @@ namespace LineGame.Runtime.Managers
                     _tilesNoBall.Add(tile);
                 }
             }
-            for(int i = 0; i < _sizeOfTable; i++)
+            for(int i = 0; i < _size; i++)
             {
                 if (_tilesNoBall.Count <= 0) return;
                 int randomNumber = Random.Range(0, _tilesNoBall.Count);
@@ -65,13 +64,13 @@ namespace LineGame.Runtime.Managers
                 tile.Ball = BallResourceSystem.Instance.GetNormalRandom();
                 _tilesNoBall.RemoveAt(randomNumber);
             }
-            Camera.main.transform.position = new Vector3((float) _sizeOfTable/2 -0.5f, _sizeOfTable * _sizeOfTile - 0.5f, Camera.main.transform.position.z);
-            Camera.main.orthographicSize = _sizeOfTable*_sizeOfTile;
+            Camera.main.transform.position = new Vector3((float) _size/2 -0.5f, _size * _sizeOfTile - 0.5f, Camera.main.transform.position.z);
+            Camera.main.orthographicSize = _size*_sizeOfTile;
             GameManager.Instance.ChangeState(GameState.PlayerTurn);
         }
         public void SpawnBall()
         {
-            while(_queueBall.Count > 0)
+            while(_queueBall.Any())
             {
                 _queueBall.Dequeue().AppearBall();
             }
@@ -99,13 +98,13 @@ namespace LineGame.Runtime.Managers
         }
         protected IEnumerator MoveBallRoutine()
         {
-            List<Vector2> path = Pathfinding.FindPath(_selectedFirstTile, _selectedSecondTile);
+            List<Vector2> path = Pathfinding.FindPathTwoWay(_selectedFirstTile, _selectedSecondTile);
             if (path != null)
             {
-                if (path.Count <= 3)
+                if(path.Count <= 5)
                 {
                     yield return _selectedFirstTile.MoveBall(path);
-                    _selectedSecondTile.Ball =  _selectedFirstTile.Ball;
+                    _selectedSecondTile.Ball = _selectedFirstTile.Ball;
                     _selectedFirstTile.Ball = null;
                     _tilesNoBall.Remove(_selectedSecondTile);
                     _tilesNoBall.Add(_selectedFirstTile);
@@ -116,6 +115,7 @@ namespace LineGame.Runtime.Managers
                     GameManager.Instance.ChangeState(GameState.SpawnTurn);
                     yield break;
                 }
+                           
             }
             _selectedFirstTile = null;
             _selectedSecondTile = null;
@@ -183,7 +183,7 @@ namespace LineGame.Runtime.Managers
                 tileHasBallSameCategory.Add(tempTile);
 
             }
-            for (int x = (int)tile.transform.position.x + 1; x < _sizeOfTable; x++)
+            for (int x = (int)tile.transform.position.x + 1; x < _size; x++)
             {
                 Tile tempTile = _tiles[new Vector2(x, tile.transform.position.y)];
                 if (tempTile.Ball == null) break;
@@ -217,7 +217,7 @@ namespace LineGame.Runtime.Managers
                 tileHasBallSameCategory.Add(tempTile);
 
             }
-            for (int y = (int)tile.transform.position.y + 1; y < _sizeOfTable; y++)
+            for (int y = (int)tile.transform.position.y + 1; y < _size; y++)
             {
                 Tile tempTile = _tiles[new Vector2(tile.transform.position.x, y)];
                 if (tempTile.Ball == null) break;
@@ -255,7 +255,7 @@ namespace LineGame.Runtime.Managers
 
             }
             tilePosition = new Vector2(tile.transform.position.x, tile.transform.position.y);
-            while (tilePosition.x + 1 < _sizeOfTable && tilePosition.y + 1 < _sizeOfTable)
+            while (tilePosition.x + 1 < _size && tilePosition.y + 1 < _size)
             {
                 tilePosition.x += 1;
                 tilePosition.y += 1;
@@ -281,7 +281,7 @@ namespace LineGame.Runtime.Managers
             int value = 0;
             int x = (int)tile.transform.position.x;
             int y = (int)tile.transform.position.y;
-            while (x - 1 >= 0 && y + 1 < _sizeOfTable)
+            while (x - 1 >= 0 && y + 1 < _size)
             {
                 x -= 1;
                 y += 1;
@@ -297,7 +297,7 @@ namespace LineGame.Runtime.Managers
             }
             x = (int)tile.transform.position.x;
             y = (int)tile.transform.position.y;
-            while (x + 1 < _sizeOfTable && y - 1 >= 0)
+            while (x + 1 < _size && y - 1 >= 0)
             {
                 x += 1;
                 y -= 1;
@@ -318,7 +318,36 @@ namespace LineGame.Runtime.Managers
             return tileHasBallSameCategory;
         }
         #endregion
-
+        public List<Tile> GetNeighbor(Tile tile)
+        {
+            Vector2 tilePosition = tile.transform.position;
+            List<Tile> neighbourTiles = new List<Tile>();
+            if (tilePosition.x - 1 >= 0)
+            {
+                Vector2 position = new Vector2((int)tilePosition.x - 1, (int)tilePosition.y);
+                Tile neighbourTile = _tiles[position];
+                neighbourTiles.Add(neighbourTile);
+            }
+            if (tilePosition.x + 1 < _size)
+            {
+                Vector2 position = new Vector2((int)tilePosition.x + 1, (int)tilePosition.y);
+                Tile neighbourTile = _tiles[position];
+                neighbourTiles.Add(neighbourTile);
+            }
+            if (tilePosition.y - 1 >= 0)
+            {
+                Vector2 position = new Vector2((int)tilePosition.x, (int)tilePosition.y - 1);
+                Tile neighbourTile = _tiles[position];
+                neighbourTiles.Add(neighbourTile);
+            }
+            if (tilePosition.y + 1 < _size)
+            {
+                Vector2 position = new Vector2((int)tilePosition.x, (int)tilePosition.y + 1);
+                Tile neighbourTile = _tiles[position];
+                neighbourTiles.Add(neighbourTile);
+            }
+            return neighbourTiles;
+        }
         public void Clear()
         {
             _selectedFirstTile = null;
