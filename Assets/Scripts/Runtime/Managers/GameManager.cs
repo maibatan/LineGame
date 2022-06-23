@@ -19,15 +19,11 @@ namespace LineGame.Runtime.Managers
         [SerializeField]
         protected Image[] _ballQueue;
         [SerializeField]
+        protected GameObject _gameOver;
+        [SerializeField]
         protected GameState _gameState;
         public GameState GameState => _gameState;
 
-        #region Unity Methods
-        protected void Start()
-        {
-            ChangeState(GameState.GenerateBoard);
-        }
-        #endregion
         #region Methods
         protected void UpdateScore()
         {
@@ -40,20 +36,14 @@ namespace LineGame.Runtime.Managers
                 score /= 10;
             }
         }
-        protected void UpdateBallQueue()
+       
+        public void StartGame()
         {
-            for(int i =0; i < _ballQueue.Length; i++)
-            {
-                Ball ball = BoardManager.Instance.TileHasQueueBall[i].QueuedBall;
-                _ballQueue[i].color = ball.Category.Color;
-                Image imageSpecial = _ballQueue[i].transform.GetChild(0).GetComponent<Image>();
-                if(ball.SpecialIcon != null)
-                {
-                    imageSpecial.sprite = ball.SpecialIcon;
-                    imageSpecial.color = new Color(1,1,1,1);
-                }
-                else imageSpecial.color = new Color(1, 1, 1, 0);
-            }
+            ChangeState(GameState.GenerateBoard);
+        }
+        public void QuitGame()
+        {
+            Application.Quit();
         }
         public void ChangeState(GameState newState)
         {
@@ -66,12 +56,15 @@ namespace LineGame.Runtime.Managers
                     break;
                 case GameState.PlayerTurn:
                     break;
+                case GameState.CheckTurn:
+                    BoardManager.Instance.MoveBall();
+                    break;
                 case GameState.SpawnTurn:
-                    BoardManager.Instance.SpawnQueuedBall();
-                    UpdateBallQueue();
+                    BoardManager.Instance.SpawnBall();
                     break;
                 case GameState.GameOver:
                     SoundSystem.Instance.PlayGameOverSound();
+                    _gameOver.SetActive(true);
                     break;
             }
         }
@@ -80,12 +73,25 @@ namespace LineGame.Runtime.Managers
             _playerScore += score;
             UpdateScore();
         }
+        public void DisplayQueuedBall(Ball queueBall, int position)
+        {
+            if (position >= _ballQueue.Length) return;
+            _ballQueue[position].color = queueBall.Category.Color;
+            Image imageSpecial = _ballQueue[position].transform.GetChild(0).GetComponent<Image>();
+            if (queueBall.SpecialIcon != null)
+            {
+                imageSpecial.sprite = queueBall.SpecialIcon;
+                imageSpecial.color = new Color(1, 1, 1, 1);
+            }
+            else imageSpecial.color = new Color(1, 1, 1, 0);
+        }
         #endregion
     }
     public enum GameState
     {
         GenerateBoard,
         PlayerTurn,
+        CheckTurn,
         SpawnTurn,
         GameOver
     }

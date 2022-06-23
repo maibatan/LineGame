@@ -56,14 +56,15 @@ namespace LineGame.Runtime.Core
         {
             StartCoroutine(ExplosiveVisual());
         }
-        public void InitQueuedBall(Ball ball)
+        public void SetQueuedBall(Ball ball)
         {
             _ballRenderer.color = ball.Category.Color;
             transform.localScale = new Vector3(_minSize, _minSize);
             _specialRenderer.sprite = ball.SpecialIcon;
         }
-        public void InitBall(Ball ball)
+        public void SetBall(Ball ball)
         {
+            if (ball == null) return;
             _ballRenderer.color = ball.Category.Color;
             transform.localScale = new Vector3(_maxSize, _maxSize);
             _specialRenderer.sprite = ball.SpecialIcon;
